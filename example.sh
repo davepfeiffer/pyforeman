@@ -10,44 +10,44 @@ VAR1='-mthumb-interwork -g -mcpu=cortex-m7 -mthumb -Wl,--gc-sections -T lib/link
 wait
 
 test -e ./source/mymain03.c || \
-	(echo './source/mymain03.c not found' && exit 1) &
+	(echo './source/mymain03.c not found' && kill $$) &
 
 test -e ./lib/mySystemInit.S || \
-	(echo './lib/mySystemInit.S not found' && exit 1) &
+	(echo './lib/mySystemInit.S not found' && kill $$) &
 
 test -e ./lib/startup_stm32f767xx_gcc_git01.S || \
-	(echo './lib/startup_stm32f767xx_gcc_git01.S not found' && exit 1) &
+	(echo './lib/startup_stm32f767xx_gcc_git01.S not found' && kill $$) &
 
 wait
 
 arm-none-eabi-gcc $VAR0 \
 	./source/mymain03.c \
 	-o ./bin/mymain03.o && \
-	echo "Built target: ./bin/mymain03.o" &
+	echo "Built target: ./bin/mymain03.o" || kill $$ &
 
 arm-none-eabi-gcc $VAR0 \
 	./lib/mySystemInit.S \
 	-o ./bin/mySystemInit.o && \
-	echo "Built target: ./bin/mySystemInit.o" &
+	echo "Built target: ./bin/mySystemInit.o" || kill $$ &
 
 arm-none-eabi-gcc $VAR0 \
 	./lib/startup_stm32f767xx_gcc_git01.S \
 	-o ./bin/startup_stm32f767xx_gcc_git01.o && \
-	echo "Built target: ./bin/startup_stm32f767xx_gcc_git01.o" &
+	echo "Built target: ./bin/startup_stm32f767xx_gcc_git01.o" || kill $$ &
 
 wait
 
 arm-none-eabi-gcc $VAR1 \
 	./bin/startup_stm32f767xx_gcc_git01.o ./bin/mySystemInit.o ./bin/mymain03.o \
 	-o ./bin/blinky.elf && \
-	echo "Built target: ./bin/blinky.elf" &
+	echo "Built target: ./bin/blinky.elf" || kill $$ &
 
 wait
 
 arm-none-eabi-objcopy -O ihex \
 	./bin/blinky.elf \
 	./bin/blinky.hex && \
-	echo "Built Intel hex file: ./bin/blinky.hex" &
+	echo "Built Intel hex file: ./bin/blinky.hex" || kill $$ &
 
 wait
 

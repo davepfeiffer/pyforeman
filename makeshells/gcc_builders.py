@@ -49,10 +49,12 @@ def hire_file_collector(script):
     name_check(env, target)
     material_check(env, materials)
     script.append_command("test -e {} || \\\n"
-                          "\t(echo '{} not found' && exit 1) &\n"
+                          "\t(echo '{} not found' && kill $$) &\n"
                           "".format(target, target))
     return target
   return builder
+
+# TODO: error messages on fail for all rest of the builders
 
 def hire_builder(gcc_path, flags, script):
   flag_var = script.add_var(flags)
@@ -64,7 +66,7 @@ def hire_builder(gcc_path, flags, script):
       sources += m.name + " "
     # TODO: insert cmds to check if the target is newer than the dependancies
     script.append_command("{} ${} \\\n\t{}\\\n\t-o {} && \\\n"
-                          "\techo \"Built target: {}\" &\n"
+                          "\techo \"Built target: {}\" || kill $$ &\n"
                           "".format(gcc_path, flag_var, sources, target, 
                                     target))
     return target
@@ -78,7 +80,7 @@ def hire_objcopy(gcc_path, flags, script):
     for m in materials:
       sources += m.name + " "
     script.append_command("{} {} \\\n\t{}\\\n\t{} && \\\n"
-                          "\techo \"Built Intel hex file: {}\" &\n"
+                          "\techo \"Built Intel hex file: {}\" || kill $$ &\n"
                           "".format(gcc_path, flags, sources, target, target))
     return target
   return builder
@@ -91,7 +93,7 @@ def hire_objdump(gcc_path, flags, script):
     for m in materials:
       sources += m.name + " "
     script.append_command("{} {} {} > {} && \\\n"
-                          "\techo \"Built list of objects: {}\" &\n"
+                          "\techo \"Built list of objects: {}\" || kill $$&\n"
                           "".format(gcc_path, flags, sources, target, target))
     return target
   return builder
