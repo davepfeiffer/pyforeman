@@ -39,14 +39,18 @@ def material_check(env, materials):
         missing.append(material.name)
     # raise BuilderError("Materials missing from environment: {}".format(missing))
 
+def hire_level_builder(script):
+  def builder(env):
+    script.append_command("wait\n")
+  return builder
 
 def hire_file_collector(script):
   def builder(env, target, materials):
     name_check(env, target)
     material_check(env, materials)
-    script.append_command("test -e {} || \\\n\t(echo '{} not found' && exit 1)"
+    script.append_command("test -e {} || \\\n"
+                          "\t(echo '{} not found' && exit 1) &\n"
                           "".format(target, target))
-    script.append_command("")
     return target
   return builder
 
@@ -59,9 +63,10 @@ def hire_builder(gcc_path, flags, script):
     for m in materials:
       sources += m.name + " "
     # TODO: insert cmds to check if the target is newer than the dependancies
-    script.append_command("{} ${} \\\n\t{}\\\n\t-o {}".format(gcc_path, flag_var,
-                                                          sources, target))
-    script.append_command("echo \"Built target: {}\"\n".format(target))
+    script.append_command("{} ${} \\\n\t{}\\\n\t-o {} && \\\n"
+                          "\techo \"Built target: {}\" &\n"
+                          "".format(gcc_path, flag_var, sources, target, 
+                                    target))
     return target
   return builder
 
@@ -69,12 +74,12 @@ def hire_objcopy(gcc_path, flags, script):
   def builder(env, target, materials):
     name_check(env, target)
     material_check(env, materials)
-    sources = " "
+    sources = ""
     for m in materials:
       sources += m.name + " "
-    script.append_command("{} {} {} {}"
-                          "".format(gcc_path, flags, sources, target))
-    script.append_command("echo \"Built Intel hex file: {}\"\n".format(target))
+    script.append_command("{} {} \\\n\t{}\\\n\t{} && \\\n"
+                          "\techo \"Built Intel hex file: {}\" &\n"
+                          "".format(gcc_path, flags, sources, target, target))
     return target
   return builder
 
@@ -85,8 +90,8 @@ def hire_objdump(gcc_path, flags, script):
     sources = " "
     for m in materials:
       sources += m.name + " "
-    script.append_command("{} {} {} > {}"
-                          "".format(gcc_path, flags, sources, target))
-    script.append_command("echo \"Built list of objects: {}\"\n".format(target))
+    script.append_command("{} {} {} > {} && \\\n"
+                          "\techo \"Built list of objects: {}\" &\n"
+                          "".format(gcc_path, flags, sources, target, target))
     return target
   return builder

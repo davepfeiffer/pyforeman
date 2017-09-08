@@ -1,6 +1,8 @@
 # Notice
 
-This project is underconstruction and untested.
+This project is under construction and untested. The work in here will not have
+a high level of polish or documentation. The project will likely see some
+improvement and the documentation will come once the core features are settled.
 
 # Overview
 

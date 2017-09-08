@@ -21,8 +21,6 @@ copy = gcc_builders.hire_objcopy("arm-none-eabi-objcopy", "-O ihex",
                                   build_blinky)
 dump = gcc_builders.hire_objdump("arm-none-eabi-objdump", "-S", build_blinky)
 
-wait = gcc_builders.hire_level_builder(build_blinky)
-
 library_dir = "./lib/"
 source_dir = "./source/"
 binary_dir = "./bin/"
@@ -91,5 +89,5 @@ blinky_lst = blueprint.Blueprint(
   foundation = []
 )
 
-foreman.bf_construct(blinky_hex, wait)
+foreman.df_construct(blinky_hex)
 print("Generated: {}".format(script_path))
