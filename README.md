@@ -4,9 +4,13 @@ This project is under construction and untested. The work in here will not have
 a high level of polish or documentation. The project will likely see some
 improvement and the documentation will come once the core features are settled.
 
+This project will (not likely) be ported to OCaml and custom scripting language if I find this project to be useful enough.
+
 # Overview
 
-Foreman is an extremely simple python3 package for writing or generating build/test scripts.
+PyForeman is a package that allows for easy generation of shell scripts for building projects. The project is not widely useful, but there may be someone out there who doesn't want to have make or other build tools as dependancies?
+
+The generated scripts support parallelism at each dependancy level. Dependacy cycles are checked for at run time.
 
 It also uses a cute construction site analogy for building programs.
 
@@ -16,38 +20,5 @@ For one of my classes I am not allowed to use Makefiles, only Bash or BAT script
 
 # Structure
 
-The project structure consists of the following elements:
+To be expanded upon.
 
-- Blueprints
-
-- Builders
-
-- The Foreman
-
-- The Inspector
-
-## Blueprints
-
-These are the dependancy structure of your project
-
-## Builders
-
-Builders are where all the work happens. They build blueprints.
-
-The builders are llambda functions to be written by the package user.
-
-Their signature is:
-
-`environment -> name -> materials -> product`
-
-The environment is the set of all available resources.
-
-The name is blueprint's . . .
-
-## The Foreman
-
-The foreman contains the functions to generate your scripts
-
-## The Inspector
-
-The inspector will contain the functions to build/run your tests
