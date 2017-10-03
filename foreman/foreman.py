@@ -40,9 +40,7 @@ def bf_construct(blueprint, level_builder, env=frozenset()):
 
 # do a breadth first traversal
 def bf_collect(q, visited):
-  print(q.qsize(), len(visited))
   if q.empty():
-    print(len(visited))
     return visited
   else:
     level, blueprint = q.get()
